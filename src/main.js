@@ -1,9 +1,9 @@
 // 중앙 처리 및 데이터 관리
 const Barrel = require('../lib/barrel.js')
 const command = require("./command.js")
+const container = {}
 
 const main = function (client) {
-    const container = {}
 
     client.on("message", async msg => {
 
