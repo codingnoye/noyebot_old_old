@@ -15,5 +15,5 @@ module.exports = {
       },
     keyword : 'prefix',
     help : '호출 키워드를 변경합니다.',
-    args : '키워드'
+    args : 'keyword'
 }

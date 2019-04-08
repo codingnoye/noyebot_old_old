@@ -11,5 +11,5 @@ module.exports = {
     },
     keyword : 'set',
     help : '설정을 변경합니다',
-    args : '키 값'
+    args : 'key value'
 }

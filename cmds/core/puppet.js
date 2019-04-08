@@ -8,5 +8,6 @@ module.exports = {
         }
     },
     keyword : 'puppet',
-    help : '메시지를 대신 말합니다.'
+    help : '메시지를 대신 말합니다.',
+    args : 'message'
 }
