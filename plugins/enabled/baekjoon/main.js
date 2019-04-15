@@ -16,7 +16,7 @@ const plugin = {
         setInterval(checker, 10000)
     },
     guildLoad (guild) {
-        barrel.data[guild.id] = barrel.data[guild.id] || {channel: '', users: []}
+        barrel.data[guild.id] = barrel.data[guild.id] || {channel: '', users: [], alias: {}}
         barrel.save()
     },
     message (msg) {
@@ -30,7 +30,7 @@ const plugin = {
             return true
         } else if (keyword == "bjjoin") {
             if (param.length) {
-                msg.channel.send(param + '가 등록되었습니다.')
+                barrel.data[msg.guild.id].users.push({name: param, old: 0})
                 barrel.data[msg.guild.id].users.push({name: param, old: 0})
             } else {
                 msg.channel.send('백준 아이디를 입력하세요.')
@@ -47,6 +47,14 @@ const plugin = {
                 msg.channel.send('인자를 입력하세요.')
             }
             return true
+        } else if (keyword == "bjalias") {
+            const params = param.split(" ")
+            if (params.length == 2) {
+                barrel.data[msg.guild.id].alias[params[0]] = params[1]
+            } else {
+                msg.channel.send('인자의 개수가 올바르지 않습니다.')
+            }
+            return true
         }
         return false
     },
@@ -56,8 +64,9 @@ const plugin = {
         .setTitle("백준 플러그인 도움말")
         .setDescription("아이디를 등록하면 문제를 풀 때 마다 알려줍니다.")
         embed.addField(pre+'bjhere', '이 채널을 백준 플러그인의 알림 채널로 설정합니다.')
-        embed.addField(pre+'bjjoin <name>', '백준 아이디를 플러그인에 등록합니다.')
+        embed.addField(pre+'bjjoin <id>', '백준 아이디를 플러그인에 등록합니다.')
         embed.addField(pre+'bj <number>', '백준 문제를 공유합니다.')
+        embed.addField(pre+'bjalias <id> <alias>', '해당 아이디의 별명을 설정합니다.')
         msg.channel.send({embed})
     }
 }
