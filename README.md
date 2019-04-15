@@ -34,9 +34,64 @@ module.exports = {
 * 규격에 맞춰 module.exports를 하나 내보내면 된다.
 * ```func (msg, barrel, param) => {}``` : msg는 discord.js 의 msg객체를 그대로 전달해 주고, param은 명령어 뒷부분의 인자들을 텍스트로 그대로 입력한다. barrel은 저장공간에 접근할 수 있도록 barrel 객체를 준다. barrel은 아래에서 더 설명함.
 * ```keyword```는 호출 키워드이다.
-* ```help```는 도움말이다.
+* ```help```는 도움말이다.'
+* 솔직히 문서를 너무 빈약하게 적은 것 같으니, 잘 모르겠으면 ```cmds/core/```의 기본 명령어를 참고하자. 
 -----
 * 명령어는 파일로 넣으면 알아서 등록된다.
 * keyword와 help는 알아서 도움말에 등록된다.
 # barrel 객체
-
+일종의 저장 가능한 JSON을 구현하기 위해 만든 클래스.
+```js
+const barrel1 = new Barrel('파일이름')
+// data/파일이름.json
+```
+와 같은 방법으로 배럴 객체를 생성할 수 있다. 이미 존재하는 파일이라면 불러오고, 아니라면 생성해서 불러온다. baekjoon 플러그인의 main.js를 보면 그를 확인할 수 있다.
+```js
+barrel1.data // 배럴의 데이터 전체는 이곳에 담긴다. 저장하면 이 객체의 내용이 JSON화 된다.
+barrel1.save() // 배럴을 저장한다.
+barrel1.data[msg.guild.id] // 확장을 만드려면 서버별로 데이터를 따로 저장하는 것이 좋을 것이다.
+// 세팅 파일은 서버별로 하나의 배럴을 가지는 식으로 구현되어 있음.
+// 모든 배럴은 data/ 밑에 저장되어 있다.
+```
+일단은 이런 식으로 만들어 두긴 했는데, 플러그인의 권한 제한은 없으니 맘에 안 들면 알아서 짜면 된다.
+# 플러그인
+```plugin/disabled/example/main.js```를 보자.
+```js
+const plugin = {
+    name: 'example',
+    desc: '아무 기능이 없는 테스트 플러그인입니다.',
+    load (container) {
+        debug.log('example: 플러그인 로드 완료', 2)
+    },
+    guildLoad (guild) {
+        debug.log('example: 서버 로드')
+    },
+    message (msg) {
+        debug.log('example: 메시지 받음')
+    },
+    command (msg, keyword, param) {
+        if (keyword == "echo2") {
+            msg.channel.send(param)
+            return true
+        }
+        return false
+    },
+    help (msg) {
+        msg.channel.send('example 플러그인의 도움말입니다.')
+    }
+}
+module.exports = plugin
+```
+* 아래의 요소만 채워서 ```module.exports``` 해주면 된다.
+* 로딩은 알아서 되고, ```plugin/enabled/플러그인이름/main.js```를 불러온다.
+* ```name``` : 플러그인의 이름을 나타내는 문자열
+* ```desc``` : 플러그인의 설명
+* ```guildLoad``` : 서버가 로드되었을 때 작동하는 함수
+* ```message``` : 메시지를 받았을 때 작동하는 함수
+* ```command``` : 메시지 객체, 키워드, 인자를 넘겨받는 함수. true를 반환하면 이 플러그인에 해당 명령어가 있었다는 말이다. 기본 명령어와의 충돌을 고려해서 만든 영역이다.
+* ```help``` : 플러그인의 도움말을 보여주는 함수. embed를 사용하면 좋다.
+* 플러그인 폴더 내에서 무슨 짓을 해도 괜찮으니 API만 위 형식을 맞추면 된다.
+* 마찬가지로 문서가 빈약한 것 같으니 ```plugins/enabled/```를 참고하자. 근데 baekjoon 플러그인밖에 없고 그거도 지저분하다. 더 좋은 플러그인을 누가 만들어주면 좋겠다 흑흑
+# 기타
+* 디스코드 ```코딩노예 #1483```
+* PR 막 해주세요

@@ -11,6 +11,10 @@ const plugin = {
         debug.log('example: 메시지 받음')
     },
     command (msg, keyword, param) {
+        if (keyword == "echo2") {
+            msg.channel.send(param)
+            return true
+        }
         return false
     },
     help (msg) {
