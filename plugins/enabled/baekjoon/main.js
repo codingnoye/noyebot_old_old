@@ -62,7 +62,7 @@ const plugin = {
             const params = param.split(" ")
             if (params.length == 2) {
                 barrel.data[msg.guild.id].alias[params[0]] = params[1]
-                msg.channel.send(`${params[0]}의 별명이 ${params[1]}가 되었습니다.`)
+                msg.channel.send(`${params[0]}의 별명이 ${params[1]}이(가) 되었습니다.`)
             } else {
                 msg.channel.send('인자의 개수가 올바르지 않습니다.')
             }
