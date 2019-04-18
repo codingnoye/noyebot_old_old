@@ -25,7 +25,7 @@ const plugin = {
     },
     command (msg, keyword, param) {
         if (keyword == "bjhere") {
-            msg.channel.send('백준: 이 채널에 메시지를 전송합니다.')
+            msg.channel.send('Baekjoon : 이 채널에 메시지를 전송합니다.')
             barrel.data[msg.guild.id].channel = msg.channel.id
             debug.log(msg.channel.id)
             debug.log(barrel.data[msg.guild.id].channel)
@@ -37,6 +37,16 @@ const plugin = {
             } else {
                 msg.channel.send('백준 아이디를 입력하세요.')
             }
+            return true
+        } else if (keyword == "bjusers") {
+            const embed = new RichEmbed()
+            .setTitle("Baekjoon : 등록된 사용자")
+            .setDescription("알림을 받는 사용자들의 목록입니다.")
+            for (user of barrel.data[msg.guild.id].users){
+                const alias = barrel.data[msg.guild.id].alias[user.name]
+                embed.addField(`${user.name}${typeof alias=="undefined"?"":'('+alias+')'}`, `https://www.acmicpc.net/user/${user.name}`)
+            }
+            msg.channel.send({embed})
             return true
         } else if (keyword == "bj") {
             if (param.length) {
@@ -73,10 +83,11 @@ const plugin = {
     help (msg) {
         const pre = data.container[msg.guild.id].data.prefix
         const embed = new RichEmbed()
-        .setTitle("백준 플러그인 도움말")
+        .setTitle("Baekjoon 플러그인 도움말")
         .setDescription("아이디를 등록하면 문제를 풀 때 마다 알려줍니다.")
         embed.addField(pre+'bjhere', '이 채널을 백준 플러그인의 알림 채널로 설정합니다.')
         embed.addField(pre+'bjjoin <id>', '백준 아이디를 플러그인에 등록합니다.')
+        embed.addField(pre+'bjusers', '등록된 사용자들의 목록을 봅니다.')
         embed.addField(pre+'bj <number>', '백준 문제를 공유합니다.')
         embed.addField(pre+'bjalias <id> <alias>', '해당 아이디의 별명을 설정합니다.')
         msg.channel.send({embed})

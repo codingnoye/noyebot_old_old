@@ -20,6 +20,7 @@ const parser = async function (user, barrel, key) {
             .setDescription(`${res}번 문제 : ${$('.problem_title').attr('title')}`)
             .setThumbnail("https://images-ext-2.discordapp.net/external/ICM3xDG4TGCb6rnVcsUAZdRarBUh-F_s_mOZiEY8oqA/http/onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/images/boj-og-1200.png?width=892&height=468")
             .addField('나도 풀러 가기', `https://www.acmicpc.net/problem/${res}`)
+            .addField(`${user.name} 정보`,`https://www.acmicpc.net/user/${user.name}`)
             discordapi.sendEmbed(barrel.data[key].channel, embed)
         }
         user.old = res
