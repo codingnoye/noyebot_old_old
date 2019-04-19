@@ -7,5 +7,5 @@ module.exports = {
         }
     },
     keyword : 'echo',
-    help : '도움말을 보여줍니다.'
+    help : '말을 따라합니다.'
 }
