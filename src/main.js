@@ -41,6 +41,7 @@ const main = function (client) {
 module.exports = main
 
 process.on('SIGINT', function() { // 종료시 서버 데이터들을 저장
+    debug.log('')
     debug.log("종료 감지", debug.level.imp)
     const promArr = []
     Object.keys(container).map(function(key, index) {
