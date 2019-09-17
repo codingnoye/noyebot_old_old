@@ -1,7 +1,6 @@
 // 명령어 처리 영역
 const {RichEmbed} = require('discord.js')
 const fs = require('fs')
-const setting = require("../config.js")
 
 // 유틸리티
 const AsyncFunction = (async () => {}).constructor // 비동기 함수 인식용
