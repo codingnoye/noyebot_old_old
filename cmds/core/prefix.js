@@ -1,9 +1,9 @@
 module.exports = {
-    func : (msg, barrel, param) =>  {
+    func : (msg, guild, param) =>  {
         const params = param.split(" ")
         if (params.length == 1) {
           if (params[0].length == 1) {
-            barrel.data.prefix = params[0]
+            guild.prefix = params[0]
             msg.channel.send(`호출 키워드가 ${params[0]}로 변경되었습니다.`)
             barrel.save().then(() => {})
           } else {

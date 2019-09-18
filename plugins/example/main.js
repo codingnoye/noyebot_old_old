@@ -19,6 +19,9 @@ const plugin = {
     },
     help (msg) {
         msg.channel.send('example 플러그인의 도움말입니다.')
+    },
+    api: {
+        
     }
 }
 module.exports = plugin
