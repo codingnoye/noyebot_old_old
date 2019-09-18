@@ -1,9 +1,7 @@
-// 명령어 처리 영역
 const {RichEmbed} = require('discord.js')
 const fs = require('fs')
 
-// 유틸리티
-const AsyncFunction = (async () => {}).constructor // 비동기 함수 인식용
+const AsyncFunction = (async () => {}).constructor // 비동기 함수 인식용 (instanceOf를 사용하기 위함)
 
 // 명령어 리스트, 추가 메소드
 const cmds = []
@@ -16,8 +14,7 @@ const addCmd = (func, keyword, help, args = null) => {
   })
 }
 
-// 익스포트
-
+// 메인
 const command = (bot) => {
   return async (msg) => {
     const guild = bot.guilds[msg.guild.id].data
@@ -39,8 +36,14 @@ const command = (bot) => {
           }
       }
       for (plugin of bot.plugins) {
-        if (plugin.command(msg, keyword, param)) {
-          return true
+        if (plugin.command instanceof AsyncFunction) {
+          if (await plugin.command(msg, keyword, param)) {
+            return true
+          }
+        } else {
+          if (plugin.command(msg, keyword, param)) {
+            return true
+          }
         }
       }
       msg.channel.send(`'${keyword} ${param}'을(를) 이해할 수 없습니다.`)

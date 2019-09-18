@@ -1,7 +1,7 @@
 module.exports = {
     func : (msg, guild, param) => {
         if (param.length != 0) {
-            msg.channel.send(`${param}`)
+            msg.channel.send(param)
         } else {
             msg.channel.send("인자를 입력해 주세요.")
         }

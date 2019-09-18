@@ -4,12 +4,12 @@ const fs = require('fs')
 const setting = require("../data/config.js")
 const debug = require('../lib/debug.js')
 
+// bot객체 생성
 const bot = {}
 bot.guilds = {}
 bot.plugins = []
 bot.apis = {}
 bot.setting = setting
-
 
 const command = require("./command.js")(bot)
 
@@ -25,34 +25,38 @@ for (pluginUrl of allPlugin) {
     }
 }
 
+// main 함수
 const main = function (client) {
     bot.client = client
 
+    // on msessage 이벤트
     client.on("message", async msg => {
 
         const gid = msg.guild.id
         debug.log(`msg : ${msg.content}`)
 
         // 서버 인식
-        if ((typeof bot.guilds[gid]) == 'undefined') { // 로드되지 않은 서버라면 로드
+        if ((typeof bot.guilds[gid]) == 'undefined') { // 로드되지 않은 서버라면 로드(barrel의 형태로)
             debug.log(`로드되지 않은 서버 감지됨 : ${gid} : ${msg.guild.name}`)
             bot.guilds[gid] = new Barrel(gid)
             for (plugin of bot.plugins) {
                 plugin.guildLoad(msg.guild)
             }
         }
+
+        // 메시지를 플러그인 모듈로 보내기
         for (plugin of bot.plugins) {
             plugin.message(msg)
         }
 
-        // 명령어
+        // 메시지를 명령어 모듈로 보내기
         await command(msg)
 
     })
 }
 module.exports = main
 
-process.on('SIGINT', function() { // 종료시 서버 데이터들을 저장
+process.on('SIGINT', function() { // 종료시 barrel 데이터들을 저장
     debug.log('')
     debug.log("종료 감지", debug.level.imp)
     const promArr = []
