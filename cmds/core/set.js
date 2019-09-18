@@ -1,10 +1,9 @@
 module.exports = {
-    func : (msg, barrel, param)=>{
+    func : (msg, guild, param)=>{
         const params = param.split(" ")
         if (params.length == 2) {
-            barrel.data[params[0]] = params[1]
+            guild[params[0]] = params[1]
             msg.channel.send(`${params[0]} 설정의 값이 ${params[1]}로 변경되었습니다.`)
-            barrel.save().then(() => {})
         } else {
             msg.channel.send("인자의 개수가 올바르지 않습니다.")
         }

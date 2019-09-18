@@ -1,0 +1,4 @@
+module.exports = [
+    'baekjoon',
+    'solved'
+]

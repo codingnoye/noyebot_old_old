@@ -1,20 +1,32 @@
 // 중앙 처리 및 데이터 관리
 const Barrel = require('../lib/barrel.js')
-const command = require("./command.js")
 const fs = require('fs')
-const container = {}
+const setting = require("../data/config.js")
+const debug = require('../lib/debug.js')
+
+const bot = {}
+bot.guilds = {}
+bot.plugins = []
+bot.apis = {}
+bot.setting = setting
+
+
+const command = require("./command.js")(bot)
 
 // 플러그인 로드
-const plugins = []
-const pluginlist = fs.readdirSync('plugins/enabled/')
-for (pluginurl of pluginlist) {
-    const plugin = require('../plugins/enabled/' + pluginurl + '/main.js')
-    plugin.load(container)
-    plugins.push(plugin)
+const enabledPlugin = require('../plugins/enabled.js')
+const allPlugin = fs.readdirSync('plugins/')
+for (pluginUrl of allPlugin) {
+    if (enabledPlugin.indexOf(pluginUrl) != -1) {
+        const plugin = require('../plugins/' + pluginUrl + '/main.js')(bot)
+        plugin.load()
+        bot.plugins.push(plugin)
+        bot.apis[plugin.name] = plugin.api
+    }
 }
-global.plugins = plugins
 
 const main = function (client) {
+    bot.client = client
 
     client.on("message", async msg => {
 
@@ -22,19 +34,19 @@ const main = function (client) {
         debug.log(`msg : ${msg.content}`)
 
         // 서버 인식
-        if ((typeof container[gid]) == 'undefined') { // 로드되지 않은 서버라면 로드
+        if ((typeof bot.guilds[gid]) == 'undefined') { // 로드되지 않은 서버라면 로드
             debug.log(`로드되지 않은 서버 감지됨 : ${gid} : ${msg.guild.name}`)
-            container[gid] = new Barrel(gid)
-            for (plugin of plugins) {
+            bot.guilds[gid] = new Barrel(gid)
+            for (plugin of bot.plugins) {
                 plugin.guildLoad(msg.guild)
             }
         }
-        for (plugin of plugins) {
+        for (plugin of bot.plugins) {
             plugin.message(msg)
         }
 
         // 명령어
-        await command(client, container[gid], msg, plugins)
+        await command(msg)
 
     })
 }
@@ -44,8 +56,8 @@ process.on('SIGINT', function() { // 종료시 서버 데이터들을 저장
     debug.log('')
     debug.log("종료 감지", debug.level.imp)
     const promArr = []
-    Object.keys(container).map(function(key, index) {
-        promArr.push(container[key].save())
+    Object.keys(bot.guilds).map(function(key, index) {
+        promArr.push(bot.guilds[key].save())
     })
     Promise.all(promArr).then(() => {
       debug.log("종료 전 모든 저장 완료", debug.level.imp)
