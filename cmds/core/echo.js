@@ -1,5 +1,5 @@
 module.exports = {
-    func : (msg, guild, param) => {
+    func : (bot, msg, guild, param) => {
         if (param.length != 0) {
             msg.channel.send(param)
         } else {

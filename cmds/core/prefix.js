@@ -1,5 +1,5 @@
 module.exports = {
-    func : (msg, guild, param) =>  {
+    func : (bot, msg, guild, param) =>  {
         const params = param.split(" ")
         if (params.length == 1) {
           if (params[0].length == 1) {

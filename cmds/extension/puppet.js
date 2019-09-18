@@ -1,5 +1,5 @@
 module.exports = {
-    func : (msg, barrel, param) => {
+    func : (bot, msg, barrel, param) => {
         if (param.length != 0) {
             msg.channel.send(`${param}`)
             msg.delete()
