@@ -58,7 +58,7 @@ module.exports = command
 addCmd(async (bot, msg, guild, param) => {
   if (param.length) {
     let ischecked = false
-    for (plugin of plugins){
+    for (plugin of bot.plugins){
       if (plugin.name == param) {
         plugin.help(msg)
         ischecked = true
