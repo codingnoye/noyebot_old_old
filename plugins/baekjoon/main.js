@@ -33,7 +33,9 @@ const plugin = (bot) => {
             embed.addField(pre+'bjalias <id> <alias>', '해당 아이디의 별명을 설정합니다.')
             msg.channel.send({embed})
         },
-        api: {}
+        api: {
+            barrel : bjBarrel
+        }
     }
 }
 module.exports = plugin
