@@ -1,4 +1,6 @@
 const {RichEmbed} = require('discord.js')
+const debug = require('../../lib/debug.js')
+
 module.exports = function (bot, barrel) {
     return async function (msg, keyword, param) {
         const solved = bot.apis.solved
