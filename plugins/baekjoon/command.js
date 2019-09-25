@@ -51,7 +51,6 @@ module.exports = function (bot, barrel) {
             msg.channel.send({embed})
             return true
         } else if (keyword == "bj") {
-            console.log(bot)
             if (param.length) {
                 (async ()=>{
                     const data = await rp(`https://www.acmicpc.net/problem/${param}`)

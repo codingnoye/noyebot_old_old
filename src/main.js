@@ -31,27 +31,33 @@ const main = function (client) {
 
     // on msessage 이벤트
     client.on("message", async msg => {
+        if (!msg.author.bot) {
+            if (msg.guild != null){
+                const gid = msg.guild.id
+                debug.log(`msg : ${msg.content}`)
 
-        const gid = msg.guild.id
-        debug.log(`msg : ${msg.content}`)
+                // 서버 인식
+                if ((typeof bot.guilds[gid]) == 'undefined') { // 로드되지 않은 서버라면 로드(barrel의 형태로)
+                    debug.log(`로드되지 않은 서버 감지됨 : ${gid} : ${msg.guild.name}`)
+                    bot.guilds[gid] = new Barrel(gid)
+                    for (plugin of bot.plugins) {
+                        plugin.guildLoad(msg.guild)
+                    }
+                }
 
-        // 서버 인식
-        if ((typeof bot.guilds[gid]) == 'undefined') { // 로드되지 않은 서버라면 로드(barrel의 형태로)
-            debug.log(`로드되지 않은 서버 감지됨 : ${gid} : ${msg.guild.name}`)
-            bot.guilds[gid] = new Barrel(gid)
-            for (plugin of bot.plugins) {
-                plugin.guildLoad(msg.guild)
+                // 메시지를 플러그인 모듈로 보내기
+                for (plugin of bot.plugins) {
+                    plugin.message(msg)
+                }
+
+                // 메시지를 명령어 모듈로 보내기
+                await command(msg)
+            } 
+            else {
+                debug.log(`dm : ${msg.content}`)
+                msg.channel.send('현재 DM은 지원하지 않습니다.')
             }
         }
-
-        // 메시지를 플러그인 모듈로 보내기
-        for (plugin of bot.plugins) {
-            plugin.message(msg)
-        }
-
-        // 메시지를 명령어 모듈로 보내기
-        await command(msg)
-
     })
 }
 module.exports = main
