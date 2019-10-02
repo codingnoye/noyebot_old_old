@@ -1,5 +1,7 @@
 const {RichEmbed} = require('discord.js')
 const debug = require('../../lib/debug.js')
+const rp = require('request-promise-native')
+const cheerio = require('cheerio')
 
 module.exports = function (bot, barrel) {
     return async function (msg, keyword, param) {

@@ -10,7 +10,7 @@ const parser = function (bot,user,nowBarrel,nowchanner) {
             .setTitle(user + "님의 승급을 축하해주세요!")
             .setColor(color[Math.floor((userdata.level-1)/5)])
             .setDescription(user + "님이 **" + userdata.tier + "**으로 승급하셨습니다.")
-            discordapi.sendEmbed(nowchanner,embed)
+            discordapi.sendEmbed(nowchanner, embed)
         }
         nowBarrel.level[user] = userdata.level
     })
@@ -24,7 +24,7 @@ module.exports = function (bot, solvedBarrel) {
             const users = bjbarrel.data[key].users
             const proms = []
             for (user of users) {
-                proms.push(parser(bot, user, nowBarrel, key))
+                proms.push(parser(bot, user, nowBarrel, bjbarrel.data[key].channel))
             }
             Promise.all(proms).then(solvedBarrel.save())
         })
