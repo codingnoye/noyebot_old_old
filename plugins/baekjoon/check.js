@@ -1,6 +1,5 @@
 const rp = require('request-promise-native')
 const cheerio = require('cheerio')
-const discordapi = require('../../lib/discordapi.js')
 const {RichEmbed} = require('discord.js')
 
 const parser = async function (bot, nowGuild) {
@@ -29,15 +28,24 @@ const parser = async function (bot, nowGuild) {
             const problem = solution.problem
             const name = solution.name
             const alias = nowGuild.alias[user]
+            const probdata = await solved.problem(problem) 
 
             const embed = new RichEmbed()
             .setTitle(`${user}${typeof alias=="undefined"?"":'('+alias+')'}님이 ${problem}번 문제를 풀었습니다!`)
-            .setColor(0x428BCA)
+
             .setDescription(`${problem}번 문제 : ${name}`)
-            .setThumbnail("https://images-ext-2.discordapp.net/external/ICM3xDG4TGCb6rnVcsUAZdRarBUh-F_s_mOZiEY8oqA/http/onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/images/boj-og-1200.png?width=892&height=468")
             .addField('나도 풀러 가기', `https://www.acmicpc.net/problem/${problem}`)
-            .addField('Solved.ac', '**' + await solved.problem(problem) + '**')
-            discordapi.sendEmbed(nowGuild.channel, embed)
+            .addField('Solved.ac', '**' + probdata.tier + '**')
+            if (probdata.kudeki_level > 0) {
+                embed.attachFile(`./plugins/solved/res/k${probdata.kudeki_level}.png`)
+                .setThumbnail(`attachment://k${probdata.kudeki_level}.png`)
+                .setColor(bot.apis.solved.kcolor)
+            } else {
+                embed.attachFile(`./plugins/solved/res/${probdata.level}.png`)
+                .setThumbnail(`attachment://${probdata.level}.png`)
+                .setColor(bot.apis.solved.color[Math.floor((probdata.level-1)/5)])
+            }
+            bot.client.channels.get(nowGuild.channel).send(embed)
         }
     }
 

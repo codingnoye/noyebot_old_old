@@ -55,17 +55,22 @@ module.exports = function (bot, barrel) {
         } else if (keyword == "bj") {
             if (param.length) {
                 (async ()=>{
+                    const probdata = await bot.apis.solved.problem(param)
                     const data = await rp(`https://www.acmicpc.net/problem/${param}`)
                     const $ = cheerio.load(data)
                     const embed = new RichEmbed()
                     .setTitle('**' + $('title').text() + '**')
-                    .setImage("https://images-ext-2.discordapp.net/external/ICM3xDG4TGCb6rnVcsUAZdRarBUh-F_s_mOZiEY8oqA/http/onlinejudgeimages.s3-ap-northeast-1.amazonaws.com/images/boj-og-1200.png?width=892&height=468")
                     .setDescription(`[나도 풀러 가기](https://www.acmicpc.net/problem/${param}) >`)
-                    .setColor(0x428BCA)
-                    .addField('제출', $('td:nth-child(3)').text(), true)
-                    .addField('정답', $('td:nth-child(4)').text(), true)
-                    .addField('정답 비율',$('td:nth-child(6)').text(), true)
-                    .addField('Solved.ac', '**'+await solved.problem(param)+'**', true)
+                    .addField('정답', $('td:nth-child(4)').text() + ' (' + $('td:nth-child(6)').text() + ')', true)
+                    if (probdata.kudeki_level > 0) {
+                        embed.attachFile(`./plugins/solved/res/k${probdata.kudeki_level}.png`)
+                        .setThumbnail(`attachment://k${probdata.kudeki_level}.png`)
+                        .setColor(bot.apis.solved.kcolor)
+                    } else {
+                        embed.attachFile(`./plugins/solved/res/${probdata.level}.png`)
+                        .setThumbnail(`attachment://${probdata.level}.png`)
+                        .setColor(bot.apis.solved.color[Math.floor((probdata.level-1)/5)])
+                    }
                     msg.channel.send(embed)
                 })()
             } else {
