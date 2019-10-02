@@ -89,6 +89,7 @@ addCmd( function (bot, msg, guild, param) {
     const embed = new RichEmbed()
     .setTitle('플러그인 목록')
     .setDescription("'help <plugin>'을 입력하면 해당 플러그인의 도움말을 볼 수 있습니다.")
+    .setColor(0x428BCA)
     for (plugin of bot.plugins){
         embed.addField(plugin.name, plugin.desc)
     }
