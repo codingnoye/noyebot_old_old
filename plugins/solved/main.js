@@ -38,7 +38,7 @@ const plugin = (bot) => {
             solvedBarrel.data['level'] = solvedBarrel.data['level'] || {}
             solvedBarrel.save()
             debug.log('solved 플러그인 로드 완료', 2)
-            setInterval(checker, 600000)
+            setInterval(checker, 15000)
         },
         guildLoad (guild) {
         },
