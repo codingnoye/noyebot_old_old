@@ -72,6 +72,7 @@ addCmd(async (bot, msg, guild, param) => {
     const embed = new RichEmbed()
     .setTitle(bot.setting.botname+" 도움말")
     .setDescription(bot.setting.botname+"의 명령어와 설명입니다.")
+    .setColor(0x428BCA)
     for (cmd of cmds){
       if (cmd.args){
         embed.addField(`${pre}${cmd.keyword} ${cmd.args.split(' ').map(x=>'<'+x+'>').join(' ')}`, cmd.help)
@@ -88,7 +89,7 @@ addCmd( function (bot, msg, guild, param) {
   if (param.length == 0) {
     const embed = new RichEmbed()
     .setTitle('플러그인 목록')
-    .setDescription("'help <plugin>'을 입력하면 해당 플러그인의 도움말을 볼 수 있습니다.")
+    .setDescription(`'${bot.guilds[msg.guild.id].data.prefix}help <plugin>'을 입력하면 해당 플러그인의 도움말을 볼 수 있습니다.`)
     .setColor(0x428BCA)
     for (plugin of bot.plugins){
         embed.addField(plugin.name, plugin.desc)

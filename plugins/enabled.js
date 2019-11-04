@@ -1,5 +1,7 @@
 module.exports = [
     'baekjoon',
     'solved',
-    'test'
+    'test',
+    'game',
+    'vote'
 ]
