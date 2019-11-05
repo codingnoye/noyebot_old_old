@@ -3,5 +3,6 @@ module.exports = [
     'solved',
     'test',
     'game',
-    'vote'
+    'vote',
+    'random'
 ]
