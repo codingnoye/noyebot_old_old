@@ -1,33 +1,19 @@
 // 중앙 처리 및 데이터 관리
-const Barrel = require('../lib/barrel.js')
+const Barrel = require('./store.js')
 const fs = require('fs')
-const setting = require("../data/config.js")
-const debug = require('../lib/debug.js')
-
-// bot객체 생성
-const bot = {}
-bot.guilds = {}
-bot.plugins = []
-bot.apis = {}
-bot.setting = setting
-
-const command = require("./command.js")(bot)
-
-// 플러그인 로드
-const enabledPlugin = require('../plugins/enabled.js')
-const allPlugin = fs.readdirSync('plugins/')
-for (pluginUrl of allPlugin) {
-    if (enabledPlugin.indexOf(pluginUrl) != -1) {
-        const plugin = require('../plugins/' + pluginUrl + '/main.js')(bot)
-        plugin.load()
-        bot.plugins.push(plugin)
-        bot.apis[plugin.name] = plugin.api
-    }
-}
+const debug = require('./lib/debug.js')
 
 // main 함수
-const main = function (client) {
-    bot.client = client
+const main = function (bot) {
+    const client = bot.client
+
+    // 패키지 로드
+    const allUrl = fs.readdirSync('packages/')
+    for (url of allUrl) {
+        const package = require('../packages/' + url + '/main.js')(bot)
+        package.onLoad()
+        bot.packages[package.name] = package
+    }
 
     // on msessage 이벤트
     client.on("message", async msg => {
@@ -37,21 +23,34 @@ const main = function (client) {
                 debug.log(`msg : ${msg.content}`)
 
                 // 서버 인식
-                if ((typeof bot.guilds[gid]) == 'undefined') { // 로드되지 않은 서버라면 로드(barrel의 형태로)
-                    debug.log(`로드되지 않은 서버 감지됨 : ${gid} : ${msg.guild.name}`)
-                    bot.guilds[gid] = new Barrel(gid)
-                    for (plugin of bot.plugins) {
-                        plugin.guildLoad(msg.guild)
+                if ((typeof bot.setting[gid]) == 'undefined') { // 로드되지 않은 서버라면 로드(barrel의 형태로)
+                    bot.setting[gid] = bot.store.load(`guilds/${gid}`)
+                    for (packageName in bot.packages) {
+                        bot.packages[packageName].onGuildLoad(msg, msg.guild.id)
                     }
                 }
+                const prefix = bot.setting[gid].prefix
 
                 // 메시지를 플러그인 모듈로 보내기
-                for (plugin of bot.plugins) {
-                    plugin.message(msg)
+                if (msg.content.startsWith(prefix)) {
+                    // 명령어
+                    const parts = msg.content.replace(prefix, '').split(" ")
+                    const keyword = parts[0]
+                    const param = parts.slice(1).join(" ")
+                    let worked = false
+                    for (packageName in bot.packages) {
+                        if (bot.packages[packageName].onCmd(msg, keyword, param) == true)
+                            worked = true
+                    }
+                    if (!worked)
+                        msg.channel.send(`'${keyword} ${param}'을(를) 이해할 수 없습니다.`)
+                } else {
+                    // 일반 메시지
+                    for (packageName in bot.packages) {
+                        bot.packages[packageName].onMsg(msg)
+                    }
                 }
-
-                // 메시지를 명령어 모듈로 보내기
-                await command(msg)
+                
             } 
             else {
                 debug.log(`dm : ${msg.content}`)
