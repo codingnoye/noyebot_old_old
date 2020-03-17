@@ -1,5 +1,4 @@
 // 중앙 처리 및 데이터 관리
-const Barrel = require('./store.js')
 const fs = require('fs')
 const debug = require('./lib/debug.js')
 
@@ -33,7 +32,7 @@ const main = function (bot) {
 
                 // 메시지를 플러그인 모듈로 보내기
                 if (msg.content.startsWith(prefix)) {
-                    // 명령어
+                    // 명령어 메시지
                     const parts = msg.content.replace(prefix, '').split(" ")
                     const keyword = parts[0]
                     const param = parts.slice(1).join(" ")
@@ -61,6 +60,7 @@ const main = function (bot) {
 }
 module.exports = main
 
+/*
 process.on('SIGINT', function() { // 종료시 barrel 데이터들을 저장
     debug.log('')
     debug.log("종료 감지", debug.level.imp)
@@ -73,3 +73,4 @@ process.on('SIGINT', function() { // 종료시 barrel 데이터들을 저장
       process.exit()
     })
   })
+*/

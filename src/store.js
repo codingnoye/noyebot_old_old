@@ -18,6 +18,8 @@ module.exports = {
 
     // 없는 파일에 접근하는 경우 -> 새로 만듦
     catch (e) {
+      const dir = `data/${filename.substring(0, filename.lastIndexOf('/'))}`
+      fs.mkdirSync(dir, { recursive: true })
       if (e.code == 'ENOENT') {
         data[filename] = {}
         fs.writeFileSync(`data/${filename}.json`, JSON.stringify(data[filename], null, '  '))
